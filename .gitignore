@@ -219,3 +219,7 @@ __marimo__/
 
 # Google ADK
 .adk 
+
+#others 
+.DS_Store
+
