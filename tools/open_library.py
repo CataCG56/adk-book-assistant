@@ -95,14 +95,26 @@ def search_author_works(author_id: str) -> dict:
     url = f"https://openlibrary.org/authors/{author_id}/works.json"
 
     try:
-        resp = requests.get(
-            url,
-            timeout=8,
-        )
+        resp = requests.get(url, timeout=8)
         resp.raise_for_status()
+        docs = resp.json()
+        
+        entries = docs.get("entries", [])
 
-        return resp
-    
+        works = []
+        for entry in entries:
+            work = {
+                "title": entry["title"],                   
+                "key": entry["key"],                      
+            }
+            works.append(work)
+
+        return {
+            "status": "found" if works else "not_found",
+            "total": docs.get("size", 0),
+            "works": works,
+        }
+        
     except requests.RequestException as e:
         return {"status": "error", "message": str(e)}
     

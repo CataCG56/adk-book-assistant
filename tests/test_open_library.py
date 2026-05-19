@@ -1,5 +1,4 @@
 from tools.open_library import search_book, search_author_id, search_author_works
-import json
 
 def test_found():
     result = search_book("Dune")
@@ -16,6 +15,15 @@ def test_author_id():
 
 def test_author_works():
     result = search_author_works("OL26320A")
-    pretty_json = json.dumps(result, indent=4, sort_keys=True)
-    print(pretty_json)
+    assert isinstance(result["works"], list)
+    assert len(result["works"]) > 0
     assert result is not None 
+
+def test_invalid_author_id():
+    result = search_author_works("OL00000000A")
+    assert result["status"] in ("not_found", "error")
+
+def test_empty_string():
+    result = search_author_works("")
+    assert result["status"] in ("not_found", "error")
+
